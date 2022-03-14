@@ -1,0 +1,4 @@
+/.git
+/.devcontainer
+/target
+/Cargo.lock
