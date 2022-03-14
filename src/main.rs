@@ -11,15 +11,17 @@
 use poise::serenity_prelude as serenity;
 use std::fmt::Write as _;
 
+pub mod handlers;
+
 /// A shared instance of this struct is available across all events and framework commands
-struct Data {
+pub struct Data {
     command_counter: std::sync::Mutex<std::collections::HashMap<String, u64>>,
 }
 /// This Error type is used throughout all commands and callbacks
-type Error = Box<dyn std::error::Error + Send + Sync>;
+pub type Error = Box<dyn std::error::Error + Send + Sync>;
 
 /// This type alias will save us some typing, because the Context type is needed often
-type Context<'a> = poise::Context<'a, Data, Error>;
+pub type Context<'a> = poise::Context<'a, Data, Error>;
 
 async fn event_listener(
     _ctx: &serenity::Context,
@@ -258,6 +260,7 @@ async fn main() {
             dog(),
             multiply(),
             slow_mode(),
+            handlers::tickets::ticket(),
         ],
         listener: |ctx, event, framework, user_data| {
             Box::pin(event_listener(ctx, event, framework, user_data))

@@ -8,6 +8,7 @@ edition = "2021"
 [dependencies]
 dotenv = "0.15"
 tokio = { version = "*", features = ["rt-multi-thread", "macros"] }
+thiserror = "1.0"
 
 [dependencies.poise]
 git = "https://github.com/kangalioo/poise"
