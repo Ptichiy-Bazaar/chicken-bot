@@ -64,6 +64,7 @@ pub async fn ticket(ctx: Context<'_>) -> Result<(), Error> {
 
     // XXX: :flushed:
     // TODO: Make ephemerical
-    ctx.say("SUCKSASS").await?;
+    ctx.send(|b| b.content("SUCKSASS").ephemeral(true)).await?;
+
     Ok(())
 }
