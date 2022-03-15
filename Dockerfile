@@ -2,6 +2,8 @@
 # cargo-chef and the Rust toolchain
 FROM lukemathwalker/cargo-chef:latest-rust-1.59 AS chef
 WORKDIR app
+RUN cargo install sccache
+ENV RUSTC_WRAPPER=sccache
 
 FROM chef AS planner
 COPY . .

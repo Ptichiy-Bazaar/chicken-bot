@@ -1,1 +1,1 @@
-pub mod tickets;
+pub mod ticket;

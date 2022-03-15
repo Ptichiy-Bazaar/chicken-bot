@@ -7,9 +7,19 @@ edition = "2021"
 
 [dependencies]
 dotenv = "0.15"
-tokio = { version = "*", features = ["rt-multi-thread", "macros"] }
 thiserror = "1.0"
+tracing = "0.1.32"
+tracing-subscriber = "0.3.9"
 
-[dependencies.poise]
-git = "https://github.com/kangalioo/poise"
-rev = "0fc5d548e32fc7e3c8ea490afe95db00ec17ec24"
+[dependencies.tokio]
+version = "1.17.0"
+features = ["rt-multi-thread", "signal", "macros"]
+
+[dependencies.serenity]
+version = "0.10.10"
+features = ["client", "gateway", "model", "cache", "framework", "standard_framework", "rustls_backend"]
+
+[dependencies.redis]
+version = "0.21.5"
+features = ["tokio-comp"] 
+

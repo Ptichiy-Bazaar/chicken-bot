@@ -2,3 +2,4 @@
 /.devcontainer
 /target
 /Cargo.lock
+.env*
