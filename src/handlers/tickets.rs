@@ -1,29 +1,29 @@
-use std::fmt::Write as _;
-
 use poise::serenity::model::{channel::ReactionType, interactions::message_component::ButtonStyle};
 // use thiserror::Error;
-use poise::serenity_prelude as serenity;
 use poise::serenity_prelude::EmojiId;
 
-use crate::{Context, Data, Error};
+use crate::{Context, Error};
 //#[derive(Error, Debug)]
 //pub enum TicketError {
 //    Already
 //}
 
-// TODO: Change to guild name
-const TICKET_EMBED_TITLE: &'static str = " Птичий базар | Нажмите, чтобы создать тикет";
-const TICKET_EMBED_DESCRIPTION: &'static str = "После создания тикета не забудьте описать свою проблему. Если вы этого не сделаете, то вскоре он будет закрыт";
+const FIVE_HEAD_ICON: &str = "https://i.ibb.co/J2j8np4/images.jpg";
+const TICKET_EMBED_TITLE_TEMPLATE: &str = " | Нажмите, чтобы создать тикет";
+const TICKET_EMBED_DESCRIPTION: &str = "После создания тикета не забудьте описать свою проблему. Если вы этого не сделаете, то вскоре он будет закрыт";
 
-#[poise::command(prefix_command, slash_command)]
+#[poise::command(slash_command)]
 pub async fn ticket(ctx: Context<'_>) -> Result<(), Error> {
+    let guild = ctx.guild().expect("A🦈");
+    let guild_title = format!("{}{}", guild.name, TICKET_EMBED_TITLE_TEMPLATE);
+    let guild_icon = guild
+        .icon_url()
+        .unwrap_or_else(|| String::from(FIVE_HEAD_ICON));
+
     ctx.send(|b| {
         b.embed(|b| {
-            b.author(|b| {
-                b.name(TICKET_EMBED_TITLE)
-                    .icon_url("https://i.ibb.co/L9mnKM8/photo-2019-05-31-20-48-45.jpg")
-            })
-            .description(TICKET_EMBED_DESCRIPTION)
+            b.author(|b| b.name(guild_title).icon_url(guild_icon))
+                .description(TICKET_EMBED_DESCRIPTION)
         })
         .components(|b| {
             b.create_action_row(|b| {
@@ -62,9 +62,6 @@ pub async fn ticket(ctx: Context<'_>) -> Result<(), Error> {
     })
     .await?;
 
-    // XXX: :flushed:
-    // TODO: Make ephemerical
-    ctx.send(|b| b.content("SUCKSASS").ephemeral(true)).await?;
-
+    ctx.send(|b| b.content("Success!").ephemeral(true)).await?;
     Ok(())
 }
