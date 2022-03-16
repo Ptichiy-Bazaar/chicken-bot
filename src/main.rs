@@ -91,11 +91,14 @@ async fn main() {
     let http = Http::new_with_token(&token);
 
     // Retrieve application info via HTTP
-    let application_info = http.get_current_application_info().await?;
+    let application_info = http
+        .get_current_application_info()
+        .await
+        .expect("Expected application info");
 
     let mut client = Client::builder(&token)
         .event_handler(Handler)
-        // .application_id(application_info.id.0)
+        .application_id(application_info.id.0)
         .await
         .expect("Err creating client");
 
