@@ -1,14 +1,8 @@
-//! Requires the 'framework' feature flag be enabled in your project's
-//! `Cargo.toml`.
-//!
-//! This can be enabled by specifying the feature in the dependency section:
-//!
-//! ```toml
-//! [dependencies.serenity]
-//! git = "https://github.com/serenity-rs/serenity.git"
-//! features = ["framework", "standard_framework"]
-//! ```
 mod commands;
+
+use crate::commands::ticket::render_ticket;
+
+use std::env;
 
 use serenity::{
     async_trait,
@@ -16,6 +10,7 @@ use serenity::{
     model::{
         event::ResumedEvent,
         gateway::Ready,
+        id::GuildId,
         interactions::{
             application_command::{
                 ApplicationCommand, ApplicationCommandInteractionDataOptionValue,
@@ -27,25 +22,50 @@ use serenity::{
     prelude::*,
     utils::Content,
 };
-use std::env;
 use tracing::{error, info};
+
+const SERVER_GUILD_ID: GuildId = GuildId(480112834643099668);
 
 struct Handler;
 
 #[async_trait]
 impl EventHandler for Handler {
-    async fn ready(&self, _: Context, ready: Ready) {
+    async fn ready(&self, ctx: Context, ready: Ready) {
         info!("Connected as {}", ready.user.name);
-    }
 
-    async fn resume(&self, _: Context, _: ResumedEvent) {
-        info!("Resumed");
+        let commands = GuildId::set_application_commands(&SERVER_GUILD_ID, &ctx.http, |commands| {
+            commands
+                .create_application_command(|command| {
+                    command.name("ticket").description("Создать тикет")
+                })
+                .create_application_command(|command| {
+                    command
+                        .name("id")
+                        .description("Get a user id")
+                        .create_option(|option| {
+                            option
+                                .name("id")
+                                .description("The user to lookup")
+                                .kind(ApplicationCommandOptionType::User)
+                                .required(true)
+                        })
+                })
+        })
+        .await;
+
+        info!(
+            "Registered the following guild slash commands: {:#?}",
+            commands
+        );
     }
 
     async fn interaction_create(&self, ctx: Context, interaction: Interaction) {
         if let Interaction::ApplicationCommand(command) = interaction {
             let content = match command.data.name.as_str() {
-                "ping" => "Hey, I'm alive!".to_string(),
+                "ticket" => {
+                    render_ticket(&ctx, &command).await;
+                    "Send success".to_string()
+                }
                 "id" => {
                     let options = command
                         .data
@@ -77,6 +97,8 @@ impl EventHandler for Handler {
             {
                 println!("Cannot respond to slash command: {}", why);
             }
+        } else if let Interaction::MessageComponent(msg_component) = interaction {
+            todo!()
         }
     }
 }

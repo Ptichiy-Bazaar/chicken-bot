@@ -17,7 +17,8 @@ features = ["rt-multi-thread", "signal", "macros"]
 
 [dependencies.serenity]
 version = "0.10"
-features = ["unstable_discord_api"]
+default-features = false
+features = ["builder", "cache", "client", "gateway", "model", "http", "utils", "unstable_discord_api", "rustls_backend"]
 
 [dependencies.redis]
 version = "0.21.5"
