@@ -1,6 +1,6 @@
 mod commands;
 
-use crate::commands::ticket::render_ticket;
+use crate::commands::ticket;
 
 use std::env;
 
@@ -22,9 +22,9 @@ use serenity::{
     prelude::*,
     utils::Content,
 };
-use tracing::{error, info};
+use tracing::{debug, error, info};
 
-const SERVER_GUILD_ID: GuildId = GuildId(480112834643099668);
+const SERVER_GUILD_ID: GuildId = GuildId(765071175768342599);
 
 struct Handler;
 
@@ -53,7 +53,7 @@ impl EventHandler for Handler {
         })
         .await;
 
-        info!(
+        debug!(
             "Registered the following guild slash commands: {:#?}",
             commands
         );
@@ -61,44 +61,19 @@ impl EventHandler for Handler {
 
     async fn interaction_create(&self, ctx: Context, interaction: Interaction) {
         if let Interaction::ApplicationCommand(command) = interaction {
-            let content = match command.data.name.as_str() {
+            match command.data.name.as_str() {
                 "ticket" => {
-                    render_ticket(&ctx, &command).await;
-                    "Send success".to_string()
+                    ticket::render_ticket(&ctx, &command).await;
                 }
-                "id" => {
-                    let options = command
-                        .data
-                        .options
-                        .get(0)
-                        .expect("Expected user option")
-                        .resolved
-                        .as_ref()
-                        .expect("Expected user object");
-
-                    if let ApplicationCommandInteractionDataOptionValue::User(user, _member) =
-                        options
-                    {
-                        format!("{}'s id is {}", user.tag(), user.id)
-                    } else {
-                        "Please provide a valid user".to_string()
-                    }
-                }
-                _ => "not implemented :(".to_string(),
+                _ => (),
             };
-
-            if let Err(why) = command
-                .create_interaction_response(&ctx.http, |response| {
-                    response
-                        .kind(InteractionResponseType::ChannelMessageWithSource)
-                        .interaction_response_data(|message| message.content(content))
-                })
-                .await
-            {
-                println!("Cannot respond to slash command: {}", why);
-            }
         } else if let Interaction::MessageComponent(msg_component) = interaction {
-            todo!()
+            if ticket::INTRACTION_IDS
+                .iter()
+                .any(|&id| id == msg_component.data.custom_id)
+            {
+                ticket::message_component_ticket(&ctx, &msg_component).await;
+            }
         }
     }
 }

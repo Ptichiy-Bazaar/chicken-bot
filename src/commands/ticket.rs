@@ -1,23 +1,35 @@
 use serenity::model::interactions::{
-    application_command::ApplicationCommandInteraction, message_component::ButtonStyle,
+    application_command::ApplicationCommandInteraction,
+    message_component::{ButtonStyle, MessageComponentInteraction},
 };
 use serenity::model::prelude::*;
 use serenity::prelude::*;
 
-use tracing::{debug, error, info};
+use tracing::debug;
 
+pub const INTRACTION_IDS: [&str; 3] = ["complain", "proposal", "verification"];
+const FIVE_HEAD_ICON: &str = "https://i.ibb.co/J2j8np4/images.jpg";
+const TICKET_EMBED_TITLE_TEMPLATE: &str = " | Нажмите, чтобы создать тикет";
 const TICKET_EMBED_DESCRIPTION: &str = "После создания тикета не забудьте описать свою проблему. Если вы этого не сделаете, то вскоре он будет закрыт";
 
 pub async fn render_ticket(ctx: &Context, interaction: &ApplicationCommandInteraction) {
+    let guild = interaction
+        .guild_id
+        .unwrap()
+        .to_guild_cached(ctx)
+        .await
+        .unwrap();
+    let guild_title = format!("{}{}", guild.name, TICKET_EMBED_TITLE_TEMPLATE);
+    let guild_icon = guild
+        .icon_url()
+        .unwrap_or_else(|| String::from(FIVE_HEAD_ICON));
+
     interaction
         .channel_id
         .send_message(&ctx.http, |b| {
             b.embed(|b| {
-                b.author(|b| {
-                    b.name("Title")
-                        .icon_url("https://i.ibb.co/J2j8np4/images.jpg")
-                })
-                .description(TICKET_EMBED_DESCRIPTION)
+                b.author(|b| b.name(guild_title).icon_url(guild_icon))
+                    .description(TICKET_EMBED_DESCRIPTION)
             })
             .components(|b| {
                 b.create_action_row(|b| {
@@ -56,13 +68,24 @@ pub async fn render_ticket(ctx: &Context, interaction: &ApplicationCommandIntera
         })
         .await
         .expect("Cannot send embed interaction");
-    debug!("Ticket embed created");
 
     interaction
-        .channel_id
-        .send_message(&ctx.http, |b| {
-            b.content("Success!").flags(MessageFlags::EPHEMERAL)
+        .create_interaction_response(&ctx.http, |b| {
+            b.interaction_response_data(|b| {
+                b.content("Success!")
+                    .flags(InteractionApplicationCommandCallbackDataFlags::EPHEMERAL)
+            })
         })
         .await
-        .expect("Cannot send ephemeral message");
+        .expect("Cannot send interaction response");
+
+    debug!("Ticket embed created");
+}
+
+pub async fn message_component_ticket(ctx: &Context, interaction: &MessageComponentInteraction) {
+    interaction
+        .create_interaction_response(&ctx.http, |b| {
+            b.interaction_response_data(|b| b.content("nice cock"))
+        })
+        .await;
 }
