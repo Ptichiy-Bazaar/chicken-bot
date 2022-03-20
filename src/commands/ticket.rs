@@ -160,11 +160,13 @@ pub async fn message_component_ticket(ctx: &Context, interaction: &MessageCompon
                     b.create_action_row(|b| {
                         b.create_button(|b| {
                             b.label("Перейти к заявке")
+                                .style(ButtonStyle::Link)
                                 .url(ticket_answer_msg_id.link(ticket_channel.id, Some(guild_id)))
                         })
                     })
                 })
                 .content("Запрос оставлен")
+                .flags(InteractionApplicationCommandCallbackDataFlags::EPHEMERAL)
             })
         })
         .await
