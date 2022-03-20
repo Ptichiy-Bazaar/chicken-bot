@@ -8,21 +8,13 @@ use serenity::{
     async_trait,
     http::Http,
     model::{
-        event::ResumedEvent,
         gateway::Ready,
         id::GuildId,
-        interactions::{
-            application_command::{
-                ApplicationCommand, ApplicationCommandInteractionDataOptionValue,
-                ApplicationCommandOptionType,
-            },
-            Interaction, InteractionResponseType,
-        },
+        interactions::{application_command::ApplicationCommandOptionType, Interaction},
     },
     prelude::*,
-    utils::Content,
 };
-use tracing::{debug, error, info};
+use tracing::{debug, info};
 
 const SERVER_GUILD_ID: GuildId = GuildId(765071175768342599);
 
