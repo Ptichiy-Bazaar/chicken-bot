@@ -11,16 +11,10 @@ Utility bot for [Птичий Базар](https://discord.gg/jdVWPYjx3q) server 
 Copy [`.env.example`](/.env.example) file to `.env` and fill it with your env variables.
 
 ```dockerfile
-# This declares an environment variable named "DISCORD_TOKEN" with the given
-# value. When calling `dotenv::dotenv()`, it will read the `.env` file and parse
-# these key-value pairs and insert them into the environment.
-# 
-# Environment variables are separated by newlines and must not have space
-# around the equals sign (`=`).
 DISCORD_TOKEN="put your token here"
-REDIS_URL="redis url"
-# Declares the level of logging to use. Read the documentation for the `log`
-# and `env_logger` crates for more information.
+REDIS_URL="redis connection url"
+
+# Declares the level of logging to use.
 RUST_LOG=debug
 ```
 
