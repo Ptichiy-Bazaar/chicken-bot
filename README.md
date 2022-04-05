@@ -8,7 +8,7 @@ Utility bot for [Птичий Базар](https://discord.gg/jdVWPYjx3q) server 
 
 ## ⚡ Quickstart
 
-Copy `[.env.example](/.env.example)` file to `.env` and fill it with your env variables.
+Copy [`.env.example`](/.env.example) file to `.env` and fill it with your env variables.
 
 ```dockerfile
 # This declares an environment variable named "DISCORD_TOKEN" with the given
