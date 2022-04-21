@@ -1,6 +1,6 @@
 # 🐦 Chicken Bot
 
-Utility bot for [Птичий Базар](https://discord.gg/jdVWPYjx3q) server that supports features as
+Utility bot for [Птичий базар](https://discord.gg/jdVWPYjx3q) Discord server that supports features as
 
 - [Support tickets](#💁‍♀️-support-ticket)
 - [Emoji role manager](#😁-emoji-role)
